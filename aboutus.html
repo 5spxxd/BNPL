@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BNPL HUB - Smooth Wallpaper Transition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>BNPL HUB - Wallpaper Slide Animation</title>
   <style>
     * {
       box-sizing: border-box;
@@ -23,16 +23,16 @@
       background-color: #0b0c10;
     }
 
-    /* Background fader overlay */
-    #bg-fader {
+    body::before {
+      content: "";
       position: fixed;
       top: 0; left: 0;
-      width: 100vw; height: 100vh;
+      width: 100%; height: 100%;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      transition: opacity 0.8s ease-in-out;
       z-index: -1;
-      transition: opacity 1s ease-in-out;
       opacity: 1;
     }
 
@@ -54,9 +54,9 @@
 
     .slider {
       position: relative;
-      width: 90vw;
-      max-width: 360px;
-      height: 450px;
+      width: 80vw;
+      max-width: 300px;
+      height: 380px;
       border-radius: 25px;
       overflow: hidden;
       box-shadow:
@@ -140,9 +140,6 @@
   </style>
 </head>
 <body>
-  <!-- Background fader layer -->
-  <div id="bg-fader"></div>
-
   <h1>BNPL HUB</h1>
   <p class="subtitle">Buy Now Pay Later</p>
 
@@ -150,9 +147,9 @@
     <div class="slides" id="slides">
       <div class="slide active" style="background-image: url('akmal.jpg');" data-wallpaper="bg11.jpg">
         <img src="jungle.png" alt="Grabpaylateras Logo" class="slide-logo" />
-        Grabpaylater
+        Grabpaylateras
       </div>
-      <div class="slide" style="background-image: url('zozo.jpg');" data-wallpaper="bg2.png">
+      <div class="slide" style="background-image: url('zozo.jpg');" data-wallpaper="bg2.ppg">
         <img src="exp.png" alt="AeonCredit Logo" class="slide-logo" />
         AeonCredit
       </div>
@@ -177,21 +174,26 @@
     const slides = document.getElementById('slides');
     const slideElements = slides.children;
     const totalSlides = slideElements.length;
-    const bgFader = document.getElementById('bg-fader');
     let currentIndex = 0;
 
     const prevBtn = document.getElementById('prev');
     const nextBtn = document.getElementById('next');
+    const body = document.body;
 
-    function setBackground(imageUrl) {
-      // Fade out
-      bgFader.style.opacity = 0;
-      setTimeout(() => {
-        bgFader.style.backgroundImage = `url('${imageUrl}')`;
-        // Fade in
-        bgFader.style.opacity = 1;
-      }, 300);
-    }
+    // For background fade effect
+    const bgOverlay = document.createElement('div');
+    bgOverlay.style.position = 'fixed';
+    bgOverlay.style.top = '0';
+    bgOverlay.style.left = '0';
+    bgOverlay.style.width = '100%';
+    bgOverlay.style.height = '100%';
+    bgOverlay.style.backgroundSize = 'cover';
+    bgOverlay.style.backgroundPosition = 'center';
+    bgOverlay.style.backgroundRepeat = 'no-repeat';
+    bgOverlay.style.transition = 'opacity 0.8s ease-in-out';
+    bgOverlay.style.zIndex = '-1';
+    bgOverlay.style.opacity = '1';
+    document.body.appendChild(bgOverlay);
 
     function updateSlider() {
       slides.style.transform = `translateX(-${currentIndex * 100}%)`;
@@ -201,7 +203,13 @@
       }
 
       const wallpaperURL = slideElements[currentIndex].dataset.wallpaper;
-      setBackground(wallpaperURL);
+
+      // Animate wallpaper fade
+      bgOverlay.style.opacity = '0';
+      setTimeout(() => {
+        bgOverlay.style.backgroundImage = `url('${wallpaperURL}')`;
+        bgOverlay.style.opacity = '1';
+      }, 400);
     }
 
     prevBtn.addEventListener('click', () => {
@@ -215,6 +223,7 @@
     });
 
     // Initial load
+    bgOverlay.style.backgroundImage = `url('${slideElements[0].dataset.wallpaper}')`;
     updateSlider();
   </script>
 </body>
